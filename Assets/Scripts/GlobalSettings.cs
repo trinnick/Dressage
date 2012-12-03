@@ -1,12 +1,17 @@
+/* Created By: Douglas A. Stewart
+ * Project Duration: Fall 2012
+ * Purpose: Capstone Project for UHCL Masters of Sceince in Software Engineering
+*/
 using System;
 using UnityEngine;
 using System.Collections;
 
 public class GlobalSettings{
 	
+	//The rateOfMovement is used in all movement scripts and can be freely changed here
 	private float rateOfMovement = 10.0f;
-	private int levelSelect = 1;
 	
+	//Extracted information for the movements currently running
 	private string testName = "N/A";
 	private string movementID = "N/A";
 	private String[] movementDesc = {"N/A"};
@@ -15,14 +20,17 @@ public class GlobalSettings{
 	private String[] path = {"N/A"};
 	private string gait = "N/A";
 	
+	//Sets the pause method activation or hud display to show
 	private bool pause = false;
 	private bool hudToggle = true;
 	
+	//Sets the camera names to find for the toggle class to set the depths
 	private string Camera1 = "CameraHorse";
 	private string Camera2 = "CameraAbove";
 	private string Camera3 = "CameraWestStand";
 	private string Camera4 = "CameraEastStand";
 	
+	//These are the names of the xml files within the Resource folder in Assets and are used to open selected files
 	private string[] file = {
 		"FirstLevelTest1",
 		"FirstLevelTest2",
@@ -38,20 +46,13 @@ public class GlobalSettings{
 		"FourthLevelTest3"
 	};
 	
+	//This is the temporary file address of the test to be run that is sent to the ojbect to move based on it.
 	private static string fileAddress = "";
 	
 	public GlobalSettings(){
 	}
 	
 	/***********************Setters and Getters******************************/
-	
-	public int getLevelSelect(){
-		return levelSelect;
-	}
-	
-	public void setLevelSelect(int selected){
-		levelSelect = selected;
-	}
 	
 	public float getRateOfMovement(){
 		return rateOfMovement;

@@ -1,5 +1,9 @@
+/* Created By: Douglas A. Stewart
+ * Project Duration: Fall 2012
+ * Purpose: Capstone Project for UHCL Masters of Sceince in Software Engineering
+*/
 using UnityEngine;
-using System.Xml;
+using System.Xml; //This namespace is required to use the importing functionality for xml documents
 using System;
 using System.Collections;
 
@@ -13,29 +17,39 @@ public class HorseMovement : MonoBehaviour {
 		yield return StartCoroutine(LoadXML());
 	}
 	
-	//This method takes the external file selected in the GlobalSettings class
-	//and loads the XML file into temporary object
+	/* This method takes the external file selected in the GlobalSettings class
+	 * and loads the XML file into temporary object
+	*/
 	IEnumerator LoadXML(){
-		//Load XML data from external file (In this case from a url web address)
-		//This is collected from the Global Settings script
+		/*Originally the data was loaded from an external website resource using
+		 * the WWW class, however this proved unrealiable, so it was implemented
+		 * using the TextAsset class to pull from a local directory, specificaly
+		 * in the Resources folder under the Assets folder. Since the test that is
+		 * pulled is dynamic based on user selection, it pulls using the dir variable
+		 * that is associated with the file address in the Global Settings that can be
+		 * changed at any time.
+		*/
 		string dir = gs.getFileAddress();
 		TextAsset xml = (TextAsset) Resources.Load(dir);
 		
-		//Wait for complete download of external file from url source above.
+		//Wait for completion of loading xml document into xml object.
 		yield return xml;
 		//Create new XML document from loaded data
 		XmlDocument xmlDoc = new XmlDocument();
 		xmlDoc.LoadXml(xml.text);
 		
-		//This is important to set a yield return, since the program
-		//would continue to run normally without the yeild. What we want it
-		//to do is run the Coroutine and have the program run through the frame
-		//exectution as normal.
+		/* This is important to set a yield return, since the program
+		 * would continue to run normally without the yeild. What we want it
+		 * to do is run the Coroutine and have the program run through the frame
+		 * exectution as normal and wait to run the remaining code below until the
+		 * Coroutine provides a return value, in this case null
+		*/
 		yield return StartCoroutine(ExtractMovement(xmlDoc));	
 	}
 	
-	//This method extracts the data from the temporary XML object and places it
-	//in runtime movement object that will be processed on the spot.
+	/* This method extracts the data from the temporary XML object and places it
+	 * in runtime movement object that will be processed on the spot.
+	*/
 	IEnumerator ExtractMovement(XmlDocument xml){
 		Movement movement;
 		
@@ -67,8 +81,9 @@ public class HorseMovement : MonoBehaviour {
 	//Process movements based on collected variable information
 	IEnumerator ProcessMovement(Movement movement){
 		
-		//Set temporary holders of 3D position coordinates for 
-		//extracted waypoints
+		/* Set temporary holders of 3D position coordinates for 
+		 * extracted waypoints
+		*/
 		Vector3 firstPosition = new Vector3();
 		Vector3 secondPosition = new Vector3();
 		Vector3 thirdPosition = new Vector3();
@@ -90,11 +105,12 @@ public class HorseMovement : MonoBehaviour {
 		//Assign the firstPosition based on the first element of the array path
 		firstPosition = GameObject.Find(path[0]).transform.position;
 
-		//Assign the secondPosition based on the second elemnt of the array path
-		//The GameObject.Find function allows for you to find any game object
-		//created in the GUI game editor based on it's name (this was extracted
-		//from the path at array index of 1 when having split it from the original
-		//string earlier
+		/* Assign the secondPosition based on the second elemnt of the array path
+		 * The GameObject.Find function allows for you to find any game object
+		 * created in the GUI game editor based on it's name (this was extracted
+		 * from the path at array index of 1 when having split it from the original
+		 * string earlier
+		*/
 		secondPosition = GameObject.Find(path[1]).transform.position;
 
 		//If there is a third element in path, assign it to the thirdPosition variable
@@ -106,16 +122,15 @@ public class HorseMovement : MonoBehaviour {
 		if(path.Length >= 4){
 			fourthPosition = GameObject.Find(path[3]).transform.position;
 		}
-
+		
 		//If there is a fifth element in path, assign it to the fifthPosition variable
 		if(path.Length >= 5){
 			fifthPosition = GameObject.Find(path[4]).transform.position;
 		}
 
 		if(movement.PathDesc == "Line" || movement.PathDesc =="Diagonal"){
-
+			
 			//Call movement based on Coroutine and yield commands
-
 			if(path.Length>=2){
 				yield return StartCoroutine(StraightLinePath(firstPosition,secondPosition));
 			}
@@ -132,6 +147,7 @@ public class HorseMovement : MonoBehaviour {
 				yield return StartCoroutine(StraightLinePath(fourthPosition,fifthPosition));
 			}
 		}
+		
 		//If it isn't a straightline path, check for the type of arcs created
 		else{						
 			if(pathDesc[0] == "HalfCircle"){
@@ -148,13 +164,17 @@ public class HorseMovement : MonoBehaviour {
 	}
 
 	void OnGUI(){				
+		//Sets the variable to hold a formatted form of the Movement Description
 		String movementDescFormatted = null;
 		
 		String[] movementDescUnformatted = gs.getMovementDesc();
+		
+		//Run through extracted array indexes and place into string with a return separator.
 		for(int i=0;i<movementDescUnformatted.Length;i++){
 			movementDescFormatted +=  "\n" + movementDescUnformatted[i];
 		}
 		
+		//If we want to display the HUD, process the following GUI commands
 		if(gs.getHUDToggle()){
 			GUI.Box (new Rect (0,0,300,120), "Movement Description:\n" + movementDescFormatted);
 			GUI.Box (new Rect (Screen.width/2 - 75,0,150,50), "Test: \n" + gs.getTestName());
@@ -163,6 +183,7 @@ public class HorseMovement : MonoBehaviour {
 			GUI.Box (new Rect (Screen.width - 150,110,150,50), "Path Description: \n" + gs.getPathDesc()[0]);
 		}
 		
+		//IF we want to display the pause menu during pause, process the following GUI
 		if(gs.getPause()){
 			GUI.Box (new Rect (Screen.width/2 - 100, Screen.height/2 - 50, 200, 300), "");
 			GUI.Label (new Rect (Screen.width/2 - 30, Screen.height/2 - 40, 60, 20), "PAUSED");
@@ -175,6 +196,8 @@ public class HorseMovement : MonoBehaviour {
 				Application.LoadLevel(0);
 			}
 			GUI.Label (new Rect (Screen.width/2 - 30, Screen.height/2 + 20, 60, 20), "Hotkeys");
+			
+			//Display the Hotkeys to user using below code.
 			GUI.Box (new Rect (Screen.width/2 - 90, Screen.height/2 + 40, 180, 100), 
 				"Spacebar = Pause\n" +
 				"Alpha 1 = 3rd Person View\n" +
@@ -185,14 +208,17 @@ public class HorseMovement : MonoBehaviour {
 		}
 	}
 	
+	//The Update function will run any code within during each frame update
 	void Update(){
 		CameraToggle tg = new CameraToggle();
 		
-		//This was put here, because the system doesn't listen for
-		//input from the OnGUI method
+		/* This was put here, because the system doesn't listen for
+		 * input from the OnGUI method
+		*/
 		if(Input.GetKeyDown(KeyCode.DownArrow) && gs.getHUDToggle() == false){
 			gs.setHUDToggle(true);
 		}
+		
 		else if(Input.GetKeyDown(KeyCode.DownArrow) && gs.getHUDToggle() == true){
 			gs.setHUDToggle(false);
 		}
@@ -201,17 +227,24 @@ public class HorseMovement : MonoBehaviour {
 		tg.toggle();
 	}
 	
+	/* The following method linearly interpolates the attached object to this script
+	 * from one point to the next.
+	*/
 	IEnumerator StraightLinePath(Vector3 first, Vector3 second){
 	    float dist = Vector3.Distance(first, second);
-	
+
+		//This loop runs the object through the Lerp function until reaching destination
 	    for (float i = 0.0f; i < 1.0f; i += ((gs.getRateOfMovement() * Time.deltaTime)/dist)) {
 	        transform.position = Vector3.Lerp(first, second, i);
+			
+			//This must be here to allow for a frame to process
 			yield return null;		
 	    }
 	}
 	
 	IEnumerator HalfCirclePath(Vector3 first, Vector3 second, string direction, string markerOne, string markerTwo, float diameter){
 		int arcDirection = 0;
+		
 		//Checking for whether it is up or down, we can assign direction
 		if(direction == "Down"){
 			arcDirection = 1;
@@ -224,17 +257,20 @@ public class HorseMovement : MonoBehaviour {
 		float distance = Vector3.Distance(first,second);
 		Vector3 radius =  new Vector3(arcDirection * distance,0.0f,0.0f)/2;
 		
+		//Because this doesn't have a true circular path, we must adjust the radius
 		if((markerOne == "H" && markerTwo == "K") || (markerOne == "K" && markerTwo == "H")){
 			distance = 20.0f;
 			radius =  new Vector3(0.0f,0.0f,arcDirection * distance)/2;
 		}
 		
+		//These are the temporary points that are assigned to be created for our bezier curve code below
 		Vector3 center = (first + second)/2;
 		Vector3 tempOne = first + radius;
 		Vector3 tempTwo = second + radius;
 		Vector3 midPoint = center + radius;
 	    float dist = (float)Math.PI * (distance)/2;
 	
+		//The loop runs through a bezier curve using the above temporary points to create the segments
 	    for (float i = 0.0f; i < 1.0f; i += ((gs.getRateOfMovement() * Time.deltaTime)/dist)*2) {
 	        Vector3 bp1 = Vector3.Lerp(first, tempOne, i);
 	        Vector3 bp2 = Vector3.Lerp(tempOne, midPoint, i);
@@ -242,7 +278,8 @@ public class HorseMovement : MonoBehaviour {
 	        transform.position = Vector3.Lerp(bp1, bp2, i);
 			yield return null;
 	    }
-	
+		
+		//Since the half-circles are created using two segments, this is the second segment code
 	    for (float i = 0.0f; i < 1.0f; i += ((gs.getRateOfMovement() * Time.deltaTime)/dist)*2) {
 	        Vector3 bp1 = Vector3.Lerp(midPoint, tempTwo, i);
 	        Vector3 bp2 = Vector3.Lerp(tempTwo, second, i);
@@ -254,6 +291,7 @@ public class HorseMovement : MonoBehaviour {
 	
 	IEnumerator FullCirclePath(Vector3 first, float diameter, string marker, string circleDirection){
 		int circleDir = 0;
+		
 		/*
 		 * Change the diameter so that the "horse" doesn't go over the
 		 * top of the fence since the actual width of the arena is 20m
@@ -270,7 +308,10 @@ public class HorseMovement : MonoBehaviour {
 	    float dist = (float)Math.PI * (diameter);
 		Vector3 second = new Vector3();
 		int flip = 1;
-
+		
+		//The following if statements are created to make a temporary second waypoint
+		
+		//The A and C markers must create circles going inward towards the arena center
 		if(marker == "A" || marker == "C"){
 			if(circleDirection == "Left"){
 				circleDir = -1;
@@ -284,6 +325,7 @@ public class HorseMovement : MonoBehaviour {
 			second = new Vector3((flip * diameter) + first.x,first.y,first.z);
 		}
 			
+		//For all markers the circles are created along the z-axis
 		if(marker == "H" || marker == "S" || marker == "E" || marker == "V" || marker == "K" ||
 			marker == "M" || marker == "R" || marker == "B" || marker == "P" || marker == "F"){
 			if(circleDirection == "Left"){
@@ -298,6 +340,7 @@ public class HorseMovement : MonoBehaviour {
 			second = new Vector3(first.x,first.y,(flip * diameter) + first.z);
 		}
 			
+		//These markers represent dependancies on x-axis flip and direction to show properly
 		if(marker == "G" || marker == "I" || marker == "X" || marker == "L" || marker == "D"){
 			if(circleDirection == "Left"){
 				circleDir = 1;
@@ -311,13 +354,16 @@ public class HorseMovement : MonoBehaviour {
 		
 		float distance = Vector3.Distance(first,second);
 		
+		//Depending on the above if statements, this will determine the path flip along axis
 		radius *= flip;
 		
+		//The loop is for full-circle which are made of four segments, two that repeat, but in reverse order
 		for (int x = 0; x < 2; x++){
 			Vector3 tempOne = new Vector3();
 			Vector3 tempTwo = new Vector3();
 			Vector3 midPoint = new Vector3();
 			
+			//The following if statements set the temporary bezier points for quadratic functions
 			if(marker == "A" || marker == "C"){
 				Vector3 center = new Vector3(radius + first.x,first.y,first.z);
 				tempOne = new Vector3(first.x,first.y,(circleDir * radius) + first.z);
@@ -331,7 +377,8 @@ public class HorseMovement : MonoBehaviour {
 				tempTwo = new Vector3((circleDir * radius) + second.x,second.y,second.z);
 				midPoint = new Vector3((circleDir * radius) + center.x,center.y,center.z);
 			}
-		
+			
+			//First and Third segment of full-circle
 		    for (float i = 0.0f; i < 1.0f; i += ((gs.getRateOfMovement() * Time.deltaTime)/dist)*4) {
 		        Vector3 bp1 = Vector3.Lerp(first, tempOne, i);
 		        Vector3 bp2 = Vector3.Lerp(tempOne, midPoint, i);
@@ -340,6 +387,7 @@ public class HorseMovement : MonoBehaviour {
 				yield return null;
 		    }
 		
+			//Second and Fourth segment of full-circle
 		    for (float i = 0.0f; i < 1.0f; i += ((gs.getRateOfMovement() * Time.deltaTime)/dist)*4) {
 		        Vector3 bp1 = Vector3.Lerp(midPoint, tempTwo, i);
 		        Vector3 bp2 = Vector3.Lerp(tempTwo, second, i);
@@ -348,13 +396,17 @@ public class HorseMovement : MonoBehaviour {
 				yield return null;
 		    }
 			
+			//The radius must change, so that the object travels in the opposite direction
 			radius *= -1;
+			
+			//Need to reverse the traversal so that it goes back to the starting point
 			Vector3 reversal = first;
 			first = second;
 			second = reversal;
 		}
 	}
 	
+	//The following method runs the object through 3 half cricles to reach the opposite waypoint
 	IEnumerator SerpentinePath(Vector3 first, Vector3 second, string side){
 		int flip = -1;
 		int direction = 1;
@@ -366,28 +418,35 @@ public class HorseMovement : MonoBehaviour {
 			direction = 1;
 		}
 		
+		//Set overall path information
 		float distance = Vector3.Distance(first,second);
 		Vector3 diameter = new Vector3(0.0f,0.0f,18.0f); //Width of arena
 		Vector3 radius =  flip * (diameter/2);
 		Vector3 oneThird = new Vector3(direction * distance/3.0f,0.0f,0.0f);
 		
-		
+		//Create initial bezier points for quadratic function
 		Vector3 center = first + (oneThird/2);
 		Vector3 tempOne = first + radius;
 		second = first + oneThird;
 		Vector3 tempTwo = second + radius;
 		Vector3 midPoint = center + radius;
+		
+		//This will determine the precise distance the object travels through the curves
 	    float dist = (float)Math.PI * (18.0f/2.0f) * 3.0f;
 	
+		//Using the loop run object through bezier points above
 		for (int x = 0; x < 3; x++){
-		    for (float i = 0.0f; i < 1.0f; i += ((gs.getRateOfMovement() * Time.deltaTime)/dist)*6) {
+		    
+			//The first segment for the half-circle created
+			for (float i = 0.0f; i < 1.0f; i += ((gs.getRateOfMovement() * Time.deltaTime)/dist)*6) {
 		        Vector3 bp1 = Vector3.Lerp(first, tempOne, i);
 		        Vector3 bp2 = Vector3.Lerp(tempOne, midPoint, i);
 		
 		        transform.position = Vector3.Lerp(bp1, bp2, i);
 				yield return null;
 		    }
-		
+			
+			//The second segment for the half-circle created
 		    for (float i = 0.0f; i < 1.0f; i += ((gs.getRateOfMovement() * Time.deltaTime)/dist)*6) {
 		        Vector3 bp1 = Vector3.Lerp(midPoint, tempTwo, i);
 		        Vector3 bp2 = Vector3.Lerp(tempTwo, second, i);
@@ -395,7 +454,11 @@ public class HorseMovement : MonoBehaviour {
 		        transform.position = Vector3.Lerp(bp1, bp2, i);
 				yield return null;
 		    }
+			
+			//Flip the object over the x-axis to run the next hump of the path
 			flip *= -1;
+			
+			//Assign the next positions for all the temporary bezier points to be processed for next set of segments.
 			first += oneThird;
 			tempOne += oneThird + (flip * diameter);
 			midPoint += oneThird + (flip * diameter);
@@ -404,6 +467,7 @@ public class HorseMovement : MonoBehaviour {
 		}
 	}
 	
+	//A method that, when called, will stop the time used in the lerp functions used in the moveents.
 	public void pauseMovement(){
 			if(Input.GetKeyDown(KeyCode.Space) && gs.getPause() == false){
 				gs.setPause(true);

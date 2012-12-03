@@ -1,3 +1,7 @@
+/* Reference Source: http://wiki.unity3d.com/index.php?title=PopupList
+ * Project Duration: Fall 2012
+ * Purpose: Capstone Project for UHCL Masters of Sceince in Software Engineering
+*/
 using UnityEngine;
 using System.Collections;
  
@@ -11,6 +15,7 @@ public class TestSelection : MonoBehaviour
  
 	private void Start()
 	{
+		//This is the list that we want to show up in our combobox options
 		comboBoxList = new GUIContent[12];
 		comboBoxList[0] = new GUIContent("First Level Test 1");
 		comboBoxList[1] = new GUIContent("First Level Test 2");
@@ -38,6 +43,7 @@ public class TestSelection : MonoBehaviour
  
 	private void OnGUI () 
 	{
+		//This will be only drawn at the initial start of the scene, because of the above code being processed in start
 		GUI.depth = 1;
 		gs.setFileAddress(comboBoxControl.Show());
 	}

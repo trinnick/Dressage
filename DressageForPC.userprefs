@@ -1,8 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Resources\ThirdLevelTest3.xml">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\MainMenu\TestSelection.cs">
     <Files>
-      <File FileName="Assets\Resources\ThirdLevelTest3.xml" Line="205" Column="22" />
+      <File FileName="Assets\Scripts\HorseMovement\HorseMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\HorseMovement\Movement.cs" Line="8" Column="86" />
+      <File FileName="Assets\Scripts\GlobalSettings.cs" Line="177" Column="1" />
+      <File FileName="Assets\Scripts\Camera\CameraToggle.cs" Line="14" Column="123" />
+      <File FileName="Assets\Scripts\MainMenu\ComboBox.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\MainMenu\MainMenu.cs" Line="4" Column="3" />
+      <File FileName="Assets\Scripts\MainMenu\TestSelection.cs" Line="4" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

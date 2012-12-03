@@ -1,5 +1,10 @@
+/* Reference Source: http://wiki.unity3d.com/index.php?title=PopupList
+ * Project Duration: Fall 2012
+ * Purpose: Capstone Project for UHCL Masters of Sceince in Software Engineering
+*/
 using UnityEngine;
- 
+
+//For more details on this script, look at the reference above, the wiki has it all.
 public class ComboBox
 {
     private static bool forceToUnShow = false; 

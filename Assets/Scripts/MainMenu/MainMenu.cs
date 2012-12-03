@@ -1,3 +1,7 @@
+/* Created By: Douglas A. Stewart
+ * Project Duration: Fall 2012
+ * Purpose: Capstone Project for UHCL Masters of Sceince in Software Engineering
+*/
 using UnityEngine;
 using System.Collections;
 
